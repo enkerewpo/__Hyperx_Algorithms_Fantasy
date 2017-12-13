@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+*.cpp~
+*.cc~
+*.c~
+*.h~
+*.hpp~
