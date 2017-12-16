@@ -126,7 +126,11 @@ int ConvexHull(Point P[], int n, Point ch[]) {
     return m;
 }
 
-
+int HalfplainIntersection(Line L[], int n, Point Poly[]) {
+    std::sort(L, L + n);
+    int hd, tl;
+    Point P = new Point[n];
+}
 
 int main(int argc, char* argv[]) {
     return 0;
