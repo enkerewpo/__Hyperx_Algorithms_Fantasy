@@ -7,11 +7,20 @@ public:
     double x, y;
     Point() {}
     Point(double _x, double _y) { x = _x, y = _y; }
-    ~Point() {}
 };
 
 typedef Point Vector;
 typedef std::vector<Point> Polygon;
+
+class Line {
+public:
+    Point P;
+    Vector v;
+    double ang;
+    Line() {}
+    Line(Point P, Vector v) : P(P), v(v) { ang = atan2(v.y, v.x); }
+    bool operator < (const Line &L) const { return ang < L.ang; }
+};
 
 int fcmp(double x) { return fabs(x) < eps ? 0 : x < 0 ? -1 : 1; }
 Vector operator + (Vector a, Vector b) { return Vector(a.x + b.x, a.y + b.y); }
