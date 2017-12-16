@@ -38,6 +38,12 @@ double Angle(Vector a, Vector b) { return acos(Dot(a, b)) / (Length(a) * Length(
 Vector Rotate(Vector a, double rad) { return Vector(a.x * cos(rad) - a.y * sin(rad), a.x * sin(rad) + a.y * cos(rad)); }
 Vector Normal(Vector a) { double L = Length(a); return Vector(-a.y / L, a.x / L); }
 
+bool onLeft(Line L, Point P) { return Cross(L.v, P - L.P) > 0; }
+Point GetIntersection(Line a, Line b) {
+    Vector u = a.P - b.P;
+    double t = Cross(b.v, u) / Cross(a.v, b.v);
+    return a.P + a.v * t;
+}
 
 /* Points and Segments Messing UP */
 bool isPointOnSegment(Point P, Point A, Point B) {
@@ -72,7 +78,7 @@ double DistanceToSegment(Point P, Point A, Point B) {
     else return fabs(Cross(a, b)) / Length(a);
 }
 
-/* Polygons and Everything Messing UP */
+/* Polygons and Lines Messing UP */
 double Area(Polygon P) {
     double ret = 0;
     Point St = P.begin();
