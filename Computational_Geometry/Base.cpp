@@ -1,7 +1,13 @@
+/**
+ *   base.cpp   Copyright(C) 2017 Kvar_ispw17 All rights reserved.
+ */
+
 #include <bits/stdc++.h>
 
 /* Computational Geometry Base Definition  */
+
 const double eps = 1e-10;
+
 class Point {
 public:
     double x, y;
@@ -46,6 +52,7 @@ Point GetIntersection(Line a, Line b) {
 }
 
 /* Points and Segments Messing UP */
+
 bool isPointOnSegment(Point P, Point A, Point B) {
     return Cross(Vector(P - A), Vector(P - B)) == 0 && (P.x - A.x) * (P.x - B.x) <= 0;
 }
