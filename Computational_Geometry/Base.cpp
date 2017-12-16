@@ -88,7 +88,7 @@ double DistanceToSegment(Point P, Point A, Point B) {
 /* Polygons and Lines Messing UP */
 double Area(Polygon P) {
     double ret = 0;
-    Point St = P.begin();
+    Point St = *P.begin();
     int s = P.size();
     for(int i = 1; i < s - 1; i++) {
         Point A = P[i], B = P[i + 1];
@@ -129,7 +129,25 @@ int ConvexHull(Point P[], int n, Point ch[]) {
 int HalfplainIntersection(Line L[], int n, Point Poly[]) {
     std::sort(L, L + n);
     int hd, tl;
-    Point P = new Point[n];
+    Point *P = new Point[n];
+    Line *q = new Line[n];
+    q[hd = tl = 0] = L[0];
+    for(int i = 1; i < n; i++) {
+        while(hd < tl && !onLeft(L[i], P[tl - 1])) tl--;
+        while(hd < tl && !onLeft(L[i], P[hd])) hd++;
+        q[++tl] = L[i];
+        if(fabs(Cross(q[tl].v, q[tl - 1].v) < eps)) {
+            tl--;
+            if(onLeft(q[tl], L[i].P)) q[tl] = L[i];
+        }
+        if(hd < tl) P[tl - 1] = GetIntersection(q[tl - 1], q[tl]);
+    }
+    while(hd < tl && !onLeft(q[hd], P[tl - 1])) tl--;
+    if(tl - hd <= 1) return 0;
+    P[tl] = GetIntersection(q[tl], q[hd]);
+    int m = 0;
+    for(int i = hd; i <= tl; i++) Poly[m++] = P[i];
+    return m;
 }
 
 int main(int argc, char* argv[]) {
