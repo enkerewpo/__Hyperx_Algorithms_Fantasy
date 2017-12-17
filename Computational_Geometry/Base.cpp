@@ -43,6 +43,7 @@ double Length(Vector a) { return sqrt(Dot(a, a)); }
 double Angle(Vector a, Vector b) { return acos(Dot(a, b)) / (Length(a) * Length(b)); }
 Vector Rotate(Vector a, double rad) { return Vector(a.x * cos(rad) - a.y * sin(rad), a.x * sin(rad) + a.y * cos(rad)); }
 Vector Normal(Vector a) { double L = Length(a); return Vector(-a.y / L, a.x / L); }
+double Dist(Point A, Point B) { return Length(B - A); }
 
 bool onLeft(Line L, Point P) { return Cross(L.v, P - L.P) > 0; }
 Point GetIntersection(Line a, Line b) {
@@ -148,6 +149,18 @@ int HalfplainIntersection(Line L[], int n, Point Poly[]) {
     int m = 0;
     for(int i = hd; i <= tl; i++) Poly[m++] = P[i];
     return m;
+}
+
+double rotating_calipers(Point P[], int n) {
+    int x = 1;
+    double ans = 0;
+    P[n] = P[0];
+    for(int i = 0; i < n; i++) {
+        while(Cross(P[i + 1] - P[i], P[x + 1] - P[i]) > Cross(P[i + 1] - P[i], P[x] - P[i])) x = (x + 1) % n;
+        ans = std::max(ans, Dist(P[x], P[i]));
+        ans = std::max(ans, Dist(P[x + 1], P[i + 1]));
+    }
+    return ans;
 }
 
 int main(int argc, char* argv[]) {
