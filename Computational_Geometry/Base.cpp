@@ -1,4 +1,4 @@
-/**
+ /**
  *   base.cpp   Copyright(C) 2017 Kvar_ispw17 All rights reserved.
  */
 
@@ -17,6 +17,14 @@ public:
 
 typedef Point Vector;
 typedef std::vector<Point> Polygon;
+
+class Circle {
+public:
+    Point c;
+    double r;
+    Circle(Point c, double r) : c(c), r(r) {}
+    Point point(double a) { return Point(c.x * cos(a) * r, c.y * sin(a) * r); }
+}
 
 class Line {
 public:
@@ -40,6 +48,7 @@ double Dot(Vector a, Vector b) { return a.x * b.x + a.y * b.y; }
 double Cross(Vector a, Vector b) { return a.x * b.y - a.y * b.x; }
 double Area2(Point A, Point B, Point C) { return Cross(B - A, C - A); }
 double Length(Vector a) { return sqrt(Dot(a, a)); }
+double angle(Vector a) { return atan2(a.y, a.x); }
 double Angle(Vector a, Vector b) { return acos(Dot(a, b)) / (Length(a) * Length(b)); }
 Vector Rotate(Vector a, double rad) { return Vector(a.x * cos(rad) - a.y * sin(rad), a.x * sin(rad) + a.y * cos(rad)); }
 Vector Normal(Vector a) { double L = Length(a); return Vector(-a.y / L, a.x / L); }
@@ -161,6 +170,81 @@ double rotating_calipers(Point P[], int n) {
         ans = std::max(ans, Dist(P[x + 1], P[i + 1]));
     }
     return ans;
+}
+
+using namespace std;
+/* Circle and &^%^%#@ messing up */
+int getLineCircleIntersection(Line L, Circle C, double &t1, double &t2. vector<Point> &sol) {
+    double a = L.v.x, b = L.p.x - C.c.x, c = L.v.y, d = L.p.y - C.c.y;
+    double e = a * a + c * c, f = 2 * (a * b + c * d), g = b * b + d * d - C.r * C.r;
+    double delta = f * f - 4 * e * g;
+    if(fcmp(delta) < 0) return 0;
+    if(fcmp(delta) == 0) {
+        t1 = t2 = -f / (2 * e);
+        sol.push_back(L.point(t1));
+        return 1;
+    }
+    t1 = (-f - sqrt(delta)) / (2 * e); sol.push_back(L.point(t1));
+    t2 = (-f + sqrt(delta)) / (2 * e); sol.push_back(L.point(t2));
+    return 2;
+}
+
+int getCircleCircleIntersection(Circle C1, Circle C2, vector<Point> &sol) {
+    double d = Length(C1.c - C2.c);
+    if(fcmp(d) == 0) {
+        if(fcmp(C1.r - C2.r) == 0) return -1;
+        return 0;
+    }
+    if(fcmp(C1.r + C2.r - d) < 0) return 0;
+    if(fcmp(fabs(C1.r - C2.r) - d) > 0) return 0;
+    double a = angle(C2.c - C1.c);
+    double da = acos((C1.r * C1.r + d * d - C2.r * C2.r) / (2 * C1, r * d));
+    Point p1 = C1.point(a - da), p2 = C1.point(a + da);
+    sol.push_back(p1);
+    if(p1 == p2) return 1;
+    sol.push_back(p2);
+    return 2;
+}
+
+int getTangents(Point p, Circle C, Vector *v) {
+    double dist = Length(u);
+    if(dist < C.r) return 0;
+    else if(fcmp(dist - C.r) == 0) {
+        v[0] = Rotate(i, PI / 2);
+        return 1;
+    } else {
+        double ang = asin(C.r / dist);
+        v[0] = Rotate(u, -ang);
+        v[1] = Rotate(u, +ang);
+        return 2;
+    }
+}
+
+int getTangents(Circle A, Circle B, Point *a, Point *b) {
+    int cnt = 0;
+    if(A.r < B.r) { swap(A, B); swap(a, b); }
+    int d2 = (A.x - B.x) * (A.x - B.x) + (A.y - B.y) * (A.y -B.y);
+    int rdiff = A.r - B.r;
+    int rsum = A.r + B.r;
+    if(d2 < rdiff * rdiff) return 0;
+    double base = atan2(B.y - A.y, B.x - A.x);
+    if(d2 == 0 && A.r == B.r) return -1;
+    if(d2 == rdiff * rdiff) {
+        a[cnt] = A.getPoint(base); b[cnt] = V.getPoint(base); cnt++;
+        return 1;
+    }
+    double ang = acos(A.r - B.r) / sqrt(d2);
+    a[cnt] = A.getPoint(base + ang); b[cnt] = B.getPoint(base + ang); cnt++;
+    a[cnt] = A.getPoint(base - ang); b[cnt] = B.getPoint(base - ang); cnt++;
+    if(d2 == rsum * rsum) {
+        a[cnt] = A.getPoint(base); b[cnt] =  B.getPoint(PI + base); cnt++;
+    }
+    else if(d2 > rsum * rsum) {
+        double ang = acos(A.r + B.r) / sqrt(d2);
+        a[cnt] = A.getPoint(base + ang); b[cnt] = B.getPoint(PI + base + ang); cnt++;
+        a[cnt] = A.getPoint(base - ang); b[cnt] = B.getPoint(PI + base - ang); cnt++;
+    }
+    return cnt;
 }
 
 int main(int argc, char* argv[]) {
