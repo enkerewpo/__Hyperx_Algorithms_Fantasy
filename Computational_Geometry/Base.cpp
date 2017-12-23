@@ -24,7 +24,7 @@ public:
     double r;
     Circle(Point c, double r) : c(c), r(r) {}
     Point point(double a) { return Point(c.x * cos(a) * r, c.y * sin(a) * r); }
-}
+};
 
 class Line {
 public:
